@@ -688,7 +688,7 @@
   "block.society.iridium_clock.description": "Produces Spinel every day. The amount it produces increases by 1 for every day it hasn't been moved.",
   "block.society.iridium_clock.area": "Has a 1% chance to turn outputs pristine for every golden clock in its 3x3x3 area.",
   "block.society.loom.description": "Processes 5 fibers into artisan items",
-  "block.society.mana_clock.description": "Progresses nearby Artisan Machines once a day at 7am",
+  "block.society.mana_clock.description": "Uses mana to progress nearby working Artisan Machines",
   "block.society.mayonnaise_machine.description": "Turns an egg into mayonnaise",
   "block.society.preserves_jar.description": "Turns 5 of the same crop into a preserve",
   "block.society.prize_machine.description": "Redeem Prize Tickets for a Reward!",

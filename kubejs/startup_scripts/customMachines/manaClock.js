@@ -17,6 +17,7 @@ global.manaClockTick = (entity) => {
       if (!level.isLoaded(pos)) continue;
       scanBlock = level.getBlock(pos);
       if (scanBlock.hasTag("society:golden_clock_advanced")) {
+        if (scanBlock.properties.get("working") !== "true") continue;
         global.handleProgress(level, scanBlock);
         entity.persistentData.putInt("mana", mana - MANA_PER_AGE);
         level.server.runCommandSilent(
