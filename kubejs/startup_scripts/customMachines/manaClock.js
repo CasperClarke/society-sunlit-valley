@@ -8,8 +8,16 @@ global.manaClockTick = (entity) => {
   const { x, y, z } = block;
   const radius = 1;
   let mana = entity.persistentData.getInt("mana");
-  if (mana >= MANA_PER_AGE) {
+  let dayTime = level.dayTime();
+  let morningModulo = dayTime % 24000;
+  const manaClockProgTime = 1000;
+  // only progress the machines once a day at 7am.
+  if (
+    morningModulo >= manaClockProgTime &&
+    morningModulo < manaClockProgTime + artMachineTickRate
+  ) {
     let scanBlock;
+    let progressed = false;
     for (let pos of BlockPos.betweenClosed(
       new BlockPos(x - radius, y - radius, z - radius),
       [x + radius, y + radius, z + radius]
@@ -17,11 +25,19 @@ global.manaClockTick = (entity) => {
       if (!level.isLoaded(pos)) continue;
       scanBlock = level.getBlock(pos);
       if (scanBlock.hasTag("society:golden_clock_advanced")) {
+
+        // don't consume mana if the machine is not working or is finished processing.
+        if (scanBlock.properties.get("working") !== "true") continue;
+
+        // check if the mana clock has enough mana to progress the machine.
+        if (mana < MANA_PER_AGE) break;
         global.handleProgress(level, scanBlock);
-        entity.persistentData.putInt("mana", mana - MANA_PER_AGE);
-        level.server.runCommandSilent(
-          `playsound botania:gaia_trap block @a ${x} ${y} ${z}`
-        );
+        mana -= MANA_PER_AGE;
+        entity.persistentData.putInt("mana", mana);
+
+        // store if the mana clock progressed any machines.
+        progressed = true;
+
         level.spawnParticles(
           "farmlife:stinky",
           true,
@@ -34,8 +50,14 @@ global.manaClockTick = (entity) => {
           5,
           0.01
         );
-        break;
       }
+    }
+
+    // play a sound effect when the mana clock has progressed any machines this cycle.
+    if (progressed) {
+      level.server.runCommandSilent(
+        `playsound botania:gaia_trap block @a ${x} ${y} ${z}`
+      );
     }
   }
 };
